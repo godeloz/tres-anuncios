@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora — Tres Anuncios por un Crimen</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Anton&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #1ABCB0;
+    --teal-dark: #0e9990;
+    --dark: #0d1b1e;
+    --dark2: #1a2e32;
+    --cream: #FFF8EE;
+    --gold: #F5C842;
+    --gold-dark: #c9981a;
+    --red: #E8341A;
+    --white: #ffffff;
+    --gray: #7a8e94;
+    --border: #e0e8ea;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--teal);
+    padding: 18px 24px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .header-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(30px, 5vw, 50px);
+    color: var(--white);
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+  .header-title span { color: var(--gold); }
+  .header-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 4px;
+  }
+
+  .film-strip-bar {
+    height: 18px;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .film-hole {
+    width: 12px; height: 10px;
+    background: var(--cream);
+    border-radius: 2px;
+    margin: 0 6px;
+    flex-shrink: 0;
+  }
+
+  /* STEPS */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* =====================
+     STEP 1 — FORMULARIO
+  ===================== */
+  .form-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 56px;
+  }
+
+  /* Movie card top */
+  .movie-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+  }
+  .movie-poster {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark);
+  }
+  .movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .movie-poster-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent 70%, rgba(255,255,255,0.08));
+  }
+  .movie-info {
+    padding: 24px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  .movie-year-tag {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    width: fit-content;
+  }
+  .movie-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .movie-director {
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .movie-director span {
+    color: var(--teal-dark);
+    font-weight: 600;
+  }
+  .movie-synopsis {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #4a5e64;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  /* Form fields */
+  .form-section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .field-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Stars */
+  .stars-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .star {
+    font-size: 36px;
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.15s, transform 0.15s;
+    user-select: none;
+    line-height: 1;
+  }
+  .star:hover, .star.active { color: var(--gold); }
+  .star:hover { transform: scale(1.2); }
+  .star-label {
+    font-size: 13px;
+    color: var(--gray);
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  textarea {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    resize: none;
+    height: 100px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+    background: #fafcfc;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    background: white;
+  }
+  textarea::placeholder {
+    color: #b0bec5;
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Name field */
+  .name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .name-input {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: #fafcfc;
+    transition: border-color 0.2s;
+  }
+  .name-input:focus {
+    outline: none;
+    border-color: var(--teal);
+    background: white;
+  }
+  .name-input::placeholder { color: #b0bec5; font-style: italic; }
+
+  /* Button */
+  .btn-create {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--teal);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 20px rgba(26,188,176,0.3);
+  }
+  .btn-create:hover { background: var(--teal-dark); transform: translateY(-2px); }
+
+  /* =====================
+     STEP 2 — FICHA
+  ===================== */
+  .result-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 56px;
+    text-align: center;
+  }
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 20px;
+  }
+
+  /* THE CARD */
+  .bitacora-card {
+    background: linear-gradient(145deg, #1a0a00 0%, #2d1a00 30%, #1a0800 60%, #0d1b1e 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+    text-align: left;
+  }
+  .bitacora-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 80% 10%, rgba(245,200,66,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 90%, rgba(26,188,176,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Card header */
+  .card-header {
+    background: linear-gradient(135deg, #c9981a 0%, #F5C842 50%, #c9981a 100%);
+    padding: 16px 24px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .card-header-icon {
+    font-size: 28px;
+    opacity: 0.8;
+  }
+
+  /* Film strip top */
+  .card-filmstrip {
+    height: 14px;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .card-hole {
+    width: 9px; height: 7px;
+    background: rgba(245,200,66,0.3);
+    border-radius: 1px;
+    margin: 0 5px;
+    flex-shrink: 0;
+  }
+
+  /* Card body */
+  .card-body {
+    padding: 20px 24px 24px;
+  }
+
+  /* Movie row */
+  .card-movie-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: start;
+  }
+  .card-poster {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid rgba(245,200,66,0.4);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    aspect-ratio: 2/3;
+  }
+  .card-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .card-movie-meta {
+    padding-top: 4px;
+  }
+  .card-movie-label {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+  .card-movie-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: white;
+    line-height: 1.05;
+    margin-bottom: 4px;
+  }
+  .card-movie-director {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .card-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .card-star {
+    font-size: 18px;
+    color: #444;
+  }
+  .card-star.lit { color: var(--gold); }
+
+  .card-synopsis {
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 8px;
+  }
+
+  /* Divider */
+  .card-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(245,200,66,0.3), transparent);
+    margin: 16px 0;
+  }
+
+  /* Response fields */
+  .card-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .card-field {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(245,200,66,0.2);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .card-field-label {
+    font-size: 8.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .card-field-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.85);
+    font-style: italic;
+    min-height: 60px;
+  }
+
+  /* Card footer */
+  .card-footer {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-footer-name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+  .card-footer-name span {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .card-footer-date {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+  }
+  .card-footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--teal);
+    opacity: 0.7;
+  }
+
+  /* Buttons */
+  .result-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 32px;
+    background: var(--dark);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-download:hover { background: #1e3038; }
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    background: transparent;
+    color: var(--gray);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* Loading */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,27,30,0.9);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .loading-overlay.show { display: flex; }
+  .loading-reel { font-size: 48px; animation: spin 1s linear infinite; }
+  .loading-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 3px;
+    color: white;
+    animation: flicker 1.5s infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes flicker { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+
+  .share-label {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 14px;
+    margin-top: 8px;
+  }
+  .result-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .result-btns-sec {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .btn-share-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    background: var(--teal);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 20px rgba(26,188,176,0.35);
+  }
+  .btn-share-primary:hover { background: var(--teal-dark); transform: translateY(-2px); }
+  .btn-download-sec {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--dark);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-download-sec:hover { background: #1e3038; }
+  .btn-social {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-social:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-x { background: #000; color: white; }
+  .btn-mail { background: #4a5568; color: white; }
+
+  canvas { display: none; }
+
+  @media (max-width: 600px) {
+    .movie-card { grid-template-columns: 1fr; }
+    .movie-poster { height: 200px; }
+    .name-row { grid-template-columns: 1fr; }
+    .card-fields { grid-template-columns: 1fr; }
+    .card-movie-row { grid-template-columns: 90px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-tag">Parche de Liderazgo · 2026</div>
+  <div class="header-title">Mi <span>Bitácora</span> de Cine</div>
+  <div class="header-sub">¡Liderar es una Película!</div>
+</header>
+<div class="film-strip-bar">
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-reel">🎞️</div>
+  <div class="loading-text">Creando tu bitácora...</div>
+</div>
+
+<!-- STEP 1: FORM -->
+<div class="step active" id="step1">
+  <div class="form-inner">
+
+    <!-- Movie info -->
+    <div class="movie-card">
+      <div class="movie-poster">
+        <img src="img/bit_tres_anuncios.png" alt="Tres Anuncios por un Crimen">
+        <div class="movie-poster-overlay"></div>
+      </div>
+      <div class="movie-info">
+        <div class="movie-year-tag">2017 · Estados Unidos</div>
+        <div class="movie-title">Tres Anuncios por un Crimen</div>
+        <div class="movie-director">Dir. <span>Martin McDonagh</span></div>
+        <div class="movie-synopsis">
+          Una carretera gris, tres vallas oxidadas que nadie mira, y una madre que decide llenarlas de preguntas incómodas porque el silencio ya duró demasiado. Mildred Hayes obliga a todo Ebbing a decidir entre el procedimiento cómodo o la pregunta que quedó plantada junto a la ruta. La iniciativa tiene el rostro de una madre que se niega a esperar a que el sistema haga su trabajo.
+        </div>
+      </div>
+    </div>
+
+    <!-- Stars -->
+    <div class="form-section">
+      <div class="field-label">Tu calificación</div>
+      <div class="stars-wrap">
+        <span class="star" data-val="1">★</span>
+        <span class="star" data-val="2">★</span>
+        <span class="star" data-val="3">★</span>
+        <span class="star" data-val="4">★</span>
+        <span class="star" data-val="5">★</span>
+        <span class="star-label" id="starLabel">Toca para calificar</span>
+      </div>
+    </div>
+
+    <!-- Escena -->
+    <div class="form-section">
+      <div class="field-label">Escena que no olvidaré</div>
+      <textarea id="escena" placeholder="Describe la escena que más te impactó. Puede ser un diálogo, una imagen, un momento de silencio..."></textarea>
+    </div>
+
+    <!-- Principios -->
+    <div class="form-section">
+      <div class="field-label">¿Cuáles principios guían el liderazgo del protagonista?</div>
+      <textarea id="principios" placeholder="¿Qué valores o principios mueven las decisiones de Mildred? ¿Cuál de ellos reconoces en tu propio liderazgo?"></textarea>
+    </div>
+
+    <!-- Nombre y fecha -->
+    <div class="form-section">
+      <div class="field-label">Tu firma</div>
+      <div class="name-row">
+        <input class="name-input" id="nombre" type="text" placeholder="Tu nombre" maxlength="40">
+        <input class="name-input" id="fecha" type="text" placeholder="Fecha (ej: Mayo 2026)" maxlength="30">
+      </div>
+    </div>
+
+    <button class="btn-create" onclick="crearBitacora()">
+      🎬 CREAR MI BITÁCORA
+    </button>
+
+  </div>
+</div>
+
+<!-- STEP 2: RESULT -->
+<div class="step" id="step2">
+  <div class="result-inner">
+    <div class="result-label">Tu bitácora cinematográfica</div>
+
+    <!-- THE CARD -->
+    <div class="bitacora-card" id="bitacoraCard">
+
+      <div class="card-header">
+        <div class="card-header-title">BITÁCORA</div>
+        <div class="card-header-icon">🎬</div>
+      </div>
+
+      <div class="card-filmstrip">
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+        <div class="card-hole"></div><div class="card-hole"></div><div class="card-hole"></div>
+      </div>
+
+      <div class="card-body">
+
+        <div class="card-movie-row">
+          <div class="card-poster">
+            <img src="img/bit_tres_anuncios.png" alt="Tres Anuncios por un Crimen">
+          </div>
+          <div class="card-movie-meta">
+            <div class="card-movie-label">Película · 2017</div>
+            <div class="card-movie-title">Tres Anuncios<br>por un Crimen</div>
+            <div class="card-movie-director">Dir. Martin McDonagh</div>
+            <div class="card-stars" id="cardStars"></div>
+            <div class="card-synopsis">
+              Mildred Hayes llena tres vallas de preguntas incómodas y obliga a un pueblo entero a elegir entre la comodidad del silencio y la incomodidad de actuar.
+            </div>
+          </div>
+        </div>
+
+        <div class="card-divider"></div>
+
+        <div class="card-fields">
+          <div class="card-field">
+            <div class="card-field-label">Escena que no olvidaré</div>
+            <div class="card-field-text" id="cardEscena"></div>
+          </div>
+          <div class="card-field">
+            <div class="card-field-label">Principios del liderazgo</div>
+            <div class="card-field-text" id="cardPrincipios"></div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-footer-name" id="cardNombre"></div>
+          <div class="card-footer-date" id="cardFecha"></div>
+          <div class="card-footer-brand">PARCHE DE LIDERAZGO</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="share-label">Comparte tu bitácora</div>
+    <div class="result-btns">
+      <button class="btn-share-primary" id="btnShare" onclick="compartir()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        COMPARTIR
+      </button>
+      <button class="btn-download-sec" id="btnDownload" onclick="descargar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        DESCARGAR JPG
+      </button>
+    </div>
+    <div class="result-btns-sec">
+      <button class="btn-social btn-x" onclick="compartirX()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.737-8.857L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X / Twitter
+      </button>
+      <button class="btn-social btn-mail" onclick="compartirCorreo()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Correo
+      </button>
+      <button class="btn-back" onclick="volver()">↩ Editar</button>
+    </div>
+
+  </div>
+</div>
+
+<canvas id="downloadCanvas"></canvas>
+
+<script>
+  // ---- STARS ----
+  let rating = 0;
+  const starLabels = ['', 'Interesante', 'Buena', 'Muy buena', 'Excelente', '¡Imperdible!'];
+  document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = parseInt(star.dataset.val);
+      document.querySelectorAll('.star').forEach((s, i) => {
+        s.classList.toggle('active', i < val);
+      });
+      document.getElementById('starLabel').textContent = starLabels[val];
+    });
+    star.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.star').forEach((s, i) => {
+        s.classList.toggle('active', i < rating);
+      });
+      document.getElementById('starLabel').textContent = rating ? starLabels[rating] : 'Toca para calificar';
+    });
+    star.addEventListener('click', () => {
+      rating = parseInt(star.dataset.val);
+      document.querySelectorAll('.star').forEach((s, i) => {
+        s.classList.toggle('active', i < rating);
+      });
+      document.getElementById('starLabel').textContent = starLabels[rating];
+    });
+  });
+
+  // ---- BUILD CARD ----
+  function crearBitacora() {
+    const escena = document.getElementById('escena').value.trim();
+    const principios = document.getElementById('principios').value.trim();
+    const nombre = document.getElementById('nombre').value.trim();
+    const fecha = document.getElementById('fecha').value.trim();
+
+    // Stars
+    const starsHTML = Array.from({length: 5}, (_, i) =>
+      `<span class="card-star${i < rating ? ' lit' : ''}">★</span>`
+    ).join('');
+    document.getElementById('cardStars').innerHTML = starsHTML;
+
+    document.getElementById('cardEscena').textContent = escena || '—';
+    document.getElementById('cardPrincipios').textContent = principios || '—';
+    document.getElementById('cardNombre').innerHTML = nombre
+      ? `<span>${nombre}</span>`
+      : '<span>Anónimo</span>';
+    document.getElementById('cardFecha').textContent = fecha || new Date().toLocaleDateString('es-CO', {month:'long', year:'numeric'});
+
+    document.getElementById('loadingOverlay').classList.add('show');
+    setTimeout(() => {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      showStep('step2');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }, 1400);
+  }
+
+  // ---- SHARE & DOWNLOAD ----
+
+  async function generarBlob() {
+    const canvas = await renderCanvas();
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.93));
+  }
+
+  async function compartir() {
+    const btn = document.getElementById('btnShare');
+    btn.textContent = 'Preparando...';
+    btn.disabled = true;
+    try {
+      const blob = await generarBlob();
+      const nombre = document.getElementById('nombre').value.trim() || 'mi_bitacora';
+      const file = new File([blob], `bitacora_${nombre.replace(/\s+/g,'_')}.jpg`, { type: 'image/jpeg' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: '¡Liderar es una Película!',
+          text: 'Mi bitácora de Tres Anuncios por un Crimen — Parche de Liderazgo 2026',
+          files: [file]
+        });
+      } else {
+        // Fallback: download
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Imagen descargada — compártela desde tu galería');
+      }
+    } catch(e) {
+      if (e.name !== 'AbortError') {
+        showToast('Usa el botón Descargar JPG para guardar la imagen');
+      }
+    }
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> COMPARTIR`;
+    btn.disabled = false;
+  }
+
+  async function descargar() {
+    const btn = document.getElementById('btnDownload');
+    btn.textContent = 'Preparando...';
+    btn.disabled = true;
+    try {
+      const blob = await generarBlob();
+      const nombre = document.getElementById('nombre').value.trim() || 'mi_bitacora';
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bitacora_tres_anuncios_${nombre.replace(/\s+/g,'_')}.jpg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      alert('No se pudo descargar. Intenta clic derecho sobre la tarjeta.');
+    }
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> DESCARGAR JPG`;
+    btn.disabled = false;
+  }
+
+  function compartirX() {
+    const nombre = document.getElementById('nombre').value.trim() || '';
+    const txt = encodeURIComponent(`Acabo de completar mi bitácora de "Tres Anuncios por un Crimen" en el Parche de Liderazgo 2026. ¡Liderar es una Película! 🎬 #ParcheDeLiderazgo #Liderazgo`);
+    window.open(`https://twitter.com/intent/tweet?text=${txt}`, '_blank');
+  }
+
+  function compartirCorreo() {
+    const nombre = document.getElementById('nombre').value.trim() || '';
+    const asunto = encodeURIComponent('Mi bitácora de Tres Anuncios por un Crimen — Parche de Liderazgo 2026');
+    const cuerpo = encodeURIComponent(`Hola,\n\nAcabo de completar mi bitácora cinematográfica de "Tres Anuncios por un Crimen" como parte del Parche de Liderazgo 2026.\n\n¡Liderar es una Película!\n\n${nombre}`);
+    window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
+  }
+
+  function showToast(msg) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d1b1e;color:white;padding:12px 24px;border-radius:8px;font-size:13px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+  }
+
+  async function renderCanvas() {
+    
+    const btn = document.querySelector('.btn-download');
+    btn.textContent = 'Preparando...';
+    btn.disabled = true;
+
+    const card = document.getElementById('bitacoraCard');
+    const canvas = document.getElementById('downloadCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const W = 680;
+    const H = 680;
+    canvas.width = W;
+    canvas.height = H;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#1a0a00');
+    bg.addColorStop(0.35, '#2d1a00');
+    bg.addColorStop(0.65, '#1a0800');
+    bg.addColorStop(1, '#0d1b1e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle glow top-right
+    const glow1 = ctx.createRadialGradient(W*0.85, H*0.08, 0, W*0.85, H*0.08, W*0.45);
+    glow1.addColorStop(0, 'rgba(245,200,66,0.10)');
+    glow1.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow1;
+    ctx.fillRect(0, 0, W, H);
+
+    // HEADER gold bar
+    const hdrGrad = ctx.createLinearGradient(0, 0, W, 0);
+    hdrGrad.addColorStop(0, '#c9981a');
+    hdrGrad.addColorStop(0.5, '#F5C842');
+    hdrGrad.addColorStop(1, '#c9981a');
+    ctx.fillStyle = hdrGrad;
+    ctx.fillRect(0, 0, W, 70);
+
+    ctx.fillStyle = '#0d1b1e';
+    ctx.font = 'bold 38px "Bebas Neue", Impact, sans-serif';
+    ctx.letterSpacing = '4px';
+    ctx.textAlign = 'left';
+    ctx.fillText('BITÁCORA', 24, 48);
+
+    ctx.textAlign = 'right';
+    ctx.font = '30px serif';
+    ctx.fillText('🎬', W - 24, 46);
+
+    // Film strip
+    ctx.fillStyle = '#0d1b1e';
+    ctx.fillRect(0, 70, W, 14);
+    for (let x = 8; x < W; x += 22) {
+      ctx.fillStyle = 'rgba(245,200,66,0.25)';
+      roundRect(ctx, x, 73, 10, 8, 2);
+      ctx.fill();
+    }
+
+    const bodyY = 94;
+    const pad = 24;
+
+    // Load poster
+    const posterImg = await loadImg('img/bit_tres_anuncios.png');
+
+    // Poster
+    const posterW = 130;
+    const posterH = 170;
+    const posterX = pad;
+    const posterY = bodyY + 12;
+    if (posterImg) {
+      ctx.save();
+      roundRect(ctx, posterX, posterY, posterW, posterH, 6);
+      ctx.clip();
+      ctx.drawImage(posterImg, posterX, posterY, posterW, posterH);
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(245,200,66,0.4)';
+      ctx.lineWidth = 2;
+      roundRect(ctx, posterX, posterY, posterW, posterH, 6);
+      ctx.stroke();
+    }
+
+    // Movie meta
+    const metaX = posterX + posterW + 18;
+    const metaW = W - metaX - pad;
+    let my = posterY + 8;
+
+    // Year tag
+    ctx.fillStyle = '#1ABCB0';
+    roundRect(ctx, metaX, my, 100, 20, 3);
+    ctx.fill();
+    ctx.fillStyle = 'white';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('2017 · ESTADOS UNIDOS', metaX + 8, my + 13);
+    my += 28;
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 28px "Bebas Neue", Impact, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Tres Anuncios por un Crimen', metaX, my);
+    my += 22;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Dir. Martin McDonagh', metaX, my);
+    my += 18;
+
+    // Stars on card
+    const starRating = rating || 0;
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = i < starRating ? '#F5C842' : '#333';
+      ctx.font = '22px serif';
+      ctx.fillText('★', metaX + i * 26, my + 18);
+    }
+    my += 28;
+
+    // Synopsis
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = 'italic 11px sans-serif';
+    const synLines = wrapText(ctx, 'Una madre que se niega a esperar. Mildred Hayes planta tres preguntas en una carretera y obliga a un pueblo entero a tomar partido.', metaW, 11);
+    synLines.forEach(line => {
+      ctx.fillText(line, metaX, my);
+      my += 16;
+    });
+
+    // Divider
+    const divY = bodyY + 12 + posterH + 16;
+    const divGrad = ctx.createLinearGradient(pad, 0, W - pad, 0);
+    divGrad.addColorStop(0, 'transparent');
+    divGrad.addColorStop(0.5, 'rgba(245,200,66,0.3)');
+    divGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = divGrad;
+    ctx.fillRect(pad, divY, W - pad * 2, 1);
+
+    // Fields
+    const fieldsY = divY + 16;
+    const fieldW = (W - pad * 2 - 14) / 2;
+    const fieldH = 155;
+
+    // Field boxes
+    drawField(ctx, pad, fieldsY, fieldW, fieldH,
+      'ESCENA QUE NO OLVIDARÉ',
+      document.getElementById('escena').value.trim() || '—');
+
+    drawField(ctx, pad + fieldW + 14, fieldsY, fieldW, fieldH,
+      'PRINCIPIOS DEL LIDERAZGO',
+      document.getElementById('principios').value.trim() || '—');
+
+    // Footer
+    const footerY = fieldsY + fieldH + 16;
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillRect(pad, footerY, W - pad * 2, 1);
+
+    const nombre = document.getElementById('nombre').value.trim() || 'Anónimo';
+    const fecha = document.getElementById('fecha').value.trim() || new Date().toLocaleDateString('es-CO', {month:'long', year:'numeric'});
+
+    ctx.fillStyle = '#F5C842';
+    ctx.font = 'bold italic 15px Georgia, serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(nombre, pad, footerY + 24);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(fecha.toUpperCase(), W / 2, footerY + 24);
+
+    ctx.fillStyle = '#1ABCB0';
+    ctx.font = '13px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('PARCHE DE LIDERAZGO · 2026', W - pad, footerY + 24);
+
+    return canvas;
+  }
+
+  // ---- HELPERS ----
+  function drawField(ctx, x, y, w, h, label, text) {
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.strokeStyle = 'rgba(245,200,66,0.18)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, x, y, w, h, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#F5C842';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, x + 12, y + 18);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.82)';
+    ctx.font = 'italic 12px Georgia, serif';
+    const lines = wrapText(ctx, text, w - 24, 12);
+    let ty = y + 36;
+    lines.forEach(line => {
+      if (ty < y + h - 12) {
+        ctx.fillText(line, x + 12, ty);
+        ty += 18;
+      }
+    });
+  }
+
+  function wrapText(ctx, text, maxWidth, fontSize) {
+    const words = text.split(' ');
+    const lines = [];
+    let line = '';
+    words.forEach(word => {
+      const test = line + (line ? ' ' : '') + word;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = test;
+      }
+    });
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function loadImg(src) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  function showStep(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function volver() {
+    showStep('step1');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+</script>
+</body>
+</html>
